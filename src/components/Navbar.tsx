@@ -1,9 +1,10 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Cpu } from "lucide-react";
+import { Menu, X, Cpu, Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { useTheme } from "../context/ThemeContext";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -20,6 +21,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -37,9 +39,9 @@ export default function Navbar() {
       )}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 bg-linear-to-br from-brand-primary to-brand-secondary rounded-lg flex items-center justify-center neon-glow group-hover:scale-110 transition-transform">
-            <Cpu className="text-black w-6 h-6" />
+        <Link to="/" className="flex items-center gap-2 group preserve-3d">
+          <div className="w-10 h-10 bg-linear-to-br from-brand-primary to-brand-secondary rounded-lg flex items-center justify-center neon-glow-blue group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
+            <Cpu className="text-white w-6 h-6" />
           </div>
           <span className="text-2xl font-bold tracking-tighter">
             NEXI<span className="text-brand-primary">FY</span>
@@ -54,7 +56,7 @@ export default function Navbar() {
               to={link.path}
               className={cn(
                 "text-sm font-medium transition-colors hover:text-brand-primary relative py-1",
-                location.pathname === link.path ? "text-brand-primary" : "text-white/70"
+                location.pathname === link.path ? "text-brand-primary" : "opacity-70"
               )}
             >
               {link.name}
@@ -66,18 +68,35 @@ export default function Navbar() {
               )}
             </Link>
           ))}
+          
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full glass hover:bg-brand-primary/10 transition-colors"
+            aria-label="Toggle theme"
+          >
+            {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
+          </button>
+
           <Link
             to="/contact"
-            className="px-5 py-2 bg-white text-black text-sm font-bold rounded-full hover:bg-brand-primary transition-colors"
+            className="px-5 py-2 bg-brand-primary text-white text-sm font-bold rounded-full hover:bg-brand-secondary transition-all neon-glow-blue hover:scale-105"
           >
             Get Started
           </Link>
         </div>
 
         {/* Mobile Toggle */}
-        <button className="md:hidden text-white" onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <X /> : <Menu />}
-        </button>
+        <div className="flex items-center gap-4 md:hidden">
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full glass"
+          >
+            {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
+          </button>
+          <button className="" onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? <X /> : <Menu />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -94,7 +113,7 @@ export default function Navbar() {
               onClick={() => setIsOpen(false)}
               className={cn(
                 "text-lg font-medium",
-                location.pathname === link.path ? "text-brand-primary" : "text-white"
+                location.pathname === link.path ? "text-brand-primary" : ""
               )}
             >
               {link.name}
@@ -103,7 +122,7 @@ export default function Navbar() {
           <Link
             to="/contact"
             onClick={() => setIsOpen(false)}
-            className="w-full py-3 bg-brand-primary text-black text-center font-bold rounded-xl"
+            className="w-full py-3 bg-brand-primary text-white text-center font-bold rounded-xl"
           >
             Get Started
           </Link>

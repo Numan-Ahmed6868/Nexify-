@@ -1,5 +1,6 @@
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { Cpu, Globe, Smartphone, Brain, Cloud, Shield, Server, Layers, Code2, Database, Layout, Lock } from "lucide-react";
+import { useRef } from "react";
 
 const services = [
   {
@@ -59,8 +60,14 @@ const services = [
 ];
 
 export default function Services() {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
+
   return (
-    <div className="relative z-10 pt-32 pb-24 px-6">
+    <div ref={containerRef} className="relative z-10 pt-32 pb-24 px-6">
       <div className="max-w-7xl mx-auto space-y-24">
         {/* Header */}
         <div className="text-center space-y-6 max-w-3xl mx-auto">
@@ -75,7 +82,7 @@ export default function Services() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-white/60 text-lg"
+            className="opacity-60 text-lg"
           >
             We offer a full spectrum of technology services to help you innovate, scale, and lead in your industry.
           </motion.p>
@@ -83,26 +90,30 @@ export default function Services() {
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 gap-12">
-          {services.map((service, i) => (
-            <motion.div
-              key={service.id}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="glass rounded-[40px] p-8 md:p-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center group hover:border-brand-primary/30 transition-all"
-            >
+          {services.map((service, i) => {
+            const y = useTransform(scrollYProgress, [0, 1], [0, (i % 2 === 0 ? 100 : -100)]);
+            
+            return (
+              <motion.div
+                key={service.id}
+                style={{ y }}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="glass rounded-[40px] p-8 md:p-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center group hover:border-brand-primary/30 transition-all tilt-card"
+              >
               <div className="space-y-8">
                 <div className={`w-16 h-16 rounded-2xl bg-linear-to-br ${service.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
                   <service.icon className="text-white w-8 h-8" />
                 </div>
                 <div className="space-y-4">
                   <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{service.title}</h2>
-                  <p className="text-white/60 leading-relaxed text-lg">{service.desc}</p>
+                  <p className="opacity-50 leading-relaxed text-lg">{service.desc}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   {service.benefits.map((benefit, j) => (
-                    <div key={j} className="flex items-center gap-2 text-sm text-white/80">
+                    <div key={j} className="flex items-center gap-2 text-sm opacity-70">
                       <div className="w-1.5 h-1.5 rounded-full bg-brand-primary" />
                       {benefit}
                     </div>
@@ -111,29 +122,29 @@ export default function Services() {
               </div>
 
               <div className="space-y-8">
-                <div className="glass rounded-3xl p-8 bg-white/5">
-                  <h3 className="text-sm font-bold tracking-widest text-white/30 uppercase mb-6">Technologies We Use</h3>
+                <div className="glass rounded-3xl p-8 bg-brand-primary/5">
+                  <h3 className="text-sm font-bold tracking-widest opacity-40 uppercase mb-6">Technologies We Use</h3>
                   <div className="flex flex-wrap gap-3">
                     {service.tech.map((t, k) => (
-                      <div key={k} className="px-4 py-2 glass rounded-full text-sm font-medium hover:bg-brand-primary hover:text-black transition-colors cursor-default">
+                      <div key={k} className="px-4 py-2 glass rounded-full text-sm font-medium hover:bg-brand-primary hover:text-white transition-colors cursor-default">
                         {t}
                       </div>
                     ))}
                   </div>
                 </div>
-                <div className="flex items-center justify-between p-6 glass rounded-3xl bg-linear-to-br from-white/5 to-transparent">
+                <div className="flex items-center justify-between p-6 glass rounded-3xl bg-linear-to-br from-brand-primary/5 to-transparent">
                   <div className="flex -space-x-3">
                     {[1, 2, 3, 4].map((n) => (
-                      <div key={n} className="w-10 h-10 rounded-full border-2 border-bg-dark bg-zinc-800 flex items-center justify-center text-[10px] font-bold">
+                      <div key={n} className="w-10 h-10 rounded-full border-2 border-bg-dark bg-brand-primary/10 flex items-center justify-center text-[10px] font-bold">
                         DEV
                       </div>
                     ))}
                   </div>
-                  <p className="text-xs font-bold text-white/40 tracking-widest uppercase">Expert Team Assigned</p>
+                  <p className="text-xs font-bold opacity-40 tracking-widest uppercase">Expert Team Assigned</p>
                 </div>
               </div>
             </motion.div>
-          ))}
+          )})}
         </div>
       </div>
     </div>

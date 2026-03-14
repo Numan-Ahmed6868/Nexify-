@@ -10,30 +10,33 @@ import Services from "./pages/Services";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import { motion, AnimatePresence } from "motion/react";
+import { ThemeProvider } from "./context/ThemeContext";
 
 export default function App() {
   return (
-    <Router>
-      <ScrollToTop />
-      <div className="min-h-screen bg-bg-dark text-white selection:bg-brand-primary selection:text-black overflow-x-hidden">
-        <BackgroundEffects />
-        <Navbar />
-        
-        <main>
-          <AnimatePresence mode="wait">
-            <Routes>
-              <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
-              <Route path="/services" element={<PageWrapper><Services /></PageWrapper>} />
-              <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
-              <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
-            </Routes>
-          </AnimatePresence>
-        </main>
+    <ThemeProvider>
+      <Router>
+        <ScrollToTop />
+        <div className="min-h-screen transition-colors duration-300 overflow-x-hidden">
+          <BackgroundEffects />
+          <Navbar />
+          
+          <main className="relative z-10">
+            <AnimatePresence mode="wait">
+              <Routes>
+                <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
+                <Route path="/services" element={<PageWrapper><Services /></PageWrapper>} />
+                <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
+                <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
+              </Routes>
+            </AnimatePresence>
+          </main>
 
-        <Footer />
-        <WhatsAppButton />
-      </div>
-    </Router>
+          <Footer />
+          <WhatsAppButton />
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 
